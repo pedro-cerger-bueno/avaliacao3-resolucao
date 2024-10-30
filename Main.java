@@ -1,4 +1,3 @@
-//AAAAAAAAAAAAAA
 import java.util.Random;
 
 class Registro {
