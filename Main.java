@@ -10,18 +10,18 @@ class Registro {
 
 class Tabela_Hash {
     private Registro[] tabela_hash;
-    private String var_hash;
+    private String tipo_hash;
     private int tamanho;
     private int num_colisoes = 0;
 
-    Tabela_Hash(int size, String tipoHash) {
-        this.tamanho = size;
-        this.var_hash = tipoHash;
-        this.tabela_hash = new Registro[size];
+    Tabela_Hash(int tamanho, String tipo_hash) {
+        this.tamanho = tamanho;
+        this.tipo_hash = tipo_hash;
+        this.tabela_hash = new Registro[tamanho];
     }
 
     private int Hash(Registro r) {
-        switch (var_hash) {
+        switch (tipo_hash) {
             case "divisao":
                 return r.codigo % tamanho;
             case "multiplicacao":
@@ -55,6 +55,16 @@ class Tabela_Hash {
 }
 
 public class Main {
+    
+    
+    private static int[] gerar_dados(int tamanho, Random random) {
+        int[] dados = new int[tamanho];
+        for (int i = 0; i < tamanho; i++) {
+            dados[i] = 100000000 + random.nextInt(900000000); 
+        }
+        return dados;
+    }
+
     public static void main(String[] args) {
         int[] tamanhos_tabela = {1000, 10000, 100000};
         String[] tipos_hash = {"divisao", "multiplicacao", "dobramento"};
@@ -92,12 +102,5 @@ public class Main {
             }
         }
     }
-
-    private static int[] gerar_dados(int tamanho, Random random) {
-        int[] dados = new int[tamanho];
-        for (int i = 0; i < tamanho; i++) {
-            dados[i] = 100000000 + random.nextInt(900000000); 
-        }
-        return dados;
-    }
 }
+
