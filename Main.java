@@ -54,27 +54,17 @@ class Tabela_Hash {
 
     public void inserir(Registro r) {
         int index = Hash(r);
-        
+    
         no_lista novoNo = new no_lista(r);
         if (tabela_hash[index] == null) {
             tabela_hash[index] = novoNo;
         } else {
             no_lista atual = tabela_hash[index];
-            boolean existe = false;
-            while (atual != null) {
-                if (atual.registro.codigo == r.codigo) {
-                    existe = true;
-                    break;
-                }
-                if (atual.proximo == null) {
-                    break;
-                }
+            while (atual.proximo != null) {
                 atual = atual.proximo;
             }
-            if (!existe) {
-                num_colisoes++;
-                atual.proximo = novoNo;
-            }
+            atual.proximo = novoNo;
+            num_colisoes++;
         }
     }
     
