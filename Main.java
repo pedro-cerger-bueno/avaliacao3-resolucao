@@ -8,45 +8,90 @@ class Registro {
     }
 }
 
+class no_lista {
+    Registro registro;
+    no_lista proximo;
+
+    no_lista(Registro registro) {
+        this.registro = registro;
+        this.proximo = null;
+    }
+}
+
 class Tabela_Hash {
-    private Registro[] tabela_hash;
+    private no_lista[] tabela_hash;
     private String tipo_hash;
     private int tamanho;
     private int num_colisoes = 0;
 
-    Tabela_Hash(int tamanho, String tipo_hash) {
+    Tabela_Hash(int tamanho, String tipo_hash) { 
         this.tamanho = tamanho;
         this.tipo_hash = tipo_hash;
-        this.tabela_hash = new Registro[tamanho];
+        this.tabela_hash = new no_lista[tamanho];
     }
 
-    private int Hash(Registro r) {
-        switch (tipo_hash) {
-            case "divisao":
-                return r.codigo % tamanho;
-            case "multiplicacao":
-                double A = 0.6180339887; 
-                return (int) (tamanho * ((r.codigo * A) % 1));
-            case "dobramento":
-                int primeiros_digitos = r.codigo / 1000;  
-                int ultimos_digitos = r.codigo % 1000;  
-                return (primeiros_digitos + ultimos_digitos) % tamanho;
-            default:
-                throw new IllegalArgumentException("Função hash inválida");
+    private int Hash(Registro r) {  
+        int index;
+        if (tipo_hash == "divisao") {
+            index = r.codigo % tamanho;
+        } else if (tipo_hash == "multiplicacao") {
+            double A = 0.6180339887; 
+            index = (int) (tamanho * ((r.codigo * A) % 1));
+        } else if (tipo_hash == "dobramento") {
+            int primeiros_digitos = r.codigo / 1000;  
+            int ultimos_digitos = r.codigo % 1000;  
+            index = (primeiros_digitos + ultimos_digitos) % tamanho;
+        } else {
+            index = -1;
         }
+    
+
+        
+        return index;
     }
+    
+    
 
     public void inserir(Registro r) {
         int index = Hash(r);
-        if (tabela_hash[index] != null) {
-            num_colisoes++;
+        
+        no_lista novoNo = new no_lista(r);
+        if (tabela_hash[index] == null) {
+            tabela_hash[index] = novoNo;
+        } else {
+            no_lista atual = tabela_hash[index];
+            boolean existe = false;
+            while (atual != null) {
+                if (atual.registro.codigo == r.codigo) {
+                    existe = true;
+                    break;
+                }
+                if (atual.proximo == null) {
+                    break;
+                }
+                atual = atual.proximo;
+            }
+            if (!existe) {
+                num_colisoes++;
+                atual.proximo = novoNo;
+            }
         }
-        tabela_hash[index] = r;
     }
+    
+    
+    
 
     public boolean buscar(Registro r) {
         int index = Hash(r);
-        return tabela_hash[index] != null && tabela_hash[index].codigo == r.codigo;
+        no_lista atual = tabela_hash[index];
+        
+        while (atual != null) {
+            if (atual.registro.codigo == r.codigo) {
+                return true;
+            }
+            atual = atual.proximo;
+        }
+        return false;
     }
 
     public int getColisoes() {
@@ -55,7 +100,6 @@ class Tabela_Hash {
 }
 
 public class Main {
-    
     
     private static int[] gerar_dados(int tamanho, Random random) {
         int[] dados = new int[tamanho];
@@ -68,7 +112,7 @@ public class Main {
     public static void main(String[] args) {
         int[] tamanhos_tabela = {1000, 10000, 100000};
         String[] tipos_hash = {"divisao", "multiplicacao", "dobramento"};
-        int[] tamanho_conjuntos = {1000000, 5000000, 20000000};
+        int[] tamanho_conjuntos = {100000, 500000, 2000000};
 
         int[][] dados = new int[3][];
         Random seed_aleatoria = new Random(42); 
@@ -103,4 +147,3 @@ public class Main {
         }
     }
 }
-
